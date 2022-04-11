@@ -1,3 +1,6 @@
+# pointnet Queen's AutoDrive Version
+A model was trained to 100 epochs on the object classification on the provided dataset from stanford. I have made some changes to download the dataset without a certificate. This was tested on a local WSL VM with ubuntu 20.04; python 3.7.13; tensorflow 1.15.5
+
 ## PointNet: *Deep Learning on Point Sets for 3D Classification and Segmentation*
 Created by <a href="http://charlesrqi.com" target="_blank">Charles R. Qi</a>, <a href="http://ai.stanford.edu/~haosu/" target="_blank">Hao Su</a>, <a href="http://cs.stanford.edu/~kaichun/" target="_blank">Kaichun Mo</a>, <a href="http://geometry.stanford.edu/member/guibas/" target="_blank">Leonidas J. Guibas</a> from Stanford University.
 
