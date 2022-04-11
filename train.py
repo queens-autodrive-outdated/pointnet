@@ -1,5 +1,8 @@
 import argparse
 import math
+from signal import pause
+from time import sleep
+from xxlimited import Null
 import h5py
 import numpy as np
 import tensorflow as tf
@@ -15,7 +18,7 @@ import provider
 import tf_util
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
+parser.add_argument('--gpu', type=str, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--model', default='pointnet_cls', help='Model name: pointnet_cls or pointnet_cls_basic [default: pointnet_cls]')
 parser.add_argument('--log_dir', default='log', help='Log dir [default: log]')
 parser.add_argument('--num_point', type=int, default=1024, help='Point Number [256/512/1024/2048] [default: 1024]')
@@ -33,7 +36,7 @@ BATCH_SIZE = FLAGS.batch_size
 NUM_POINT = FLAGS.num_point
 MAX_EPOCH = FLAGS.max_epoch
 BASE_LEARNING_RATE = FLAGS.learning_rate
-GPU_INDEX = FLAGS.gpu
+GPU_INDEX = FLAGS.gpu.split(",")
 MOMENTUM = FLAGS.momentum
 OPTIMIZER = FLAGS.optimizer
 DECAY_STEP = FLAGS.decay_step
@@ -92,7 +95,18 @@ def get_bn_decay(batch):
 
 def train():
     with tf.Graph().as_default():
-        with tf.device('/gpu:'+str(GPU_INDEX)):
+        if (str(type(GPU_INDEX)) == "<class 'str'>"): 
+            devices = '/gpu:'+str(GPU_INDEX)
+        elif (str(type(GPU_INDEX)) == "<class 'list'>"):
+            for GPUS in GPU_INDEX: 
+                if 'devices' in locals():
+                    devices = devices+'/gpu:'+str(GPUS)
+                elif 'devices' not in locals():
+                    devices = '/gpu:'+str(GPUS)
+            
+        else: 
+            devices = '/gpu: 0'
+        with tf.device(devices):
             pointclouds_pl, labels_pl = MODEL.placeholder_inputs(BATCH_SIZE, NUM_POINT)
             is_training_pl = tf.placeholder(tf.bool, shape=())
             print(is_training_pl)
